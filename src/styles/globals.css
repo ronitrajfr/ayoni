@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
+@import "uploadthing/tw/v4";
+@source "../node_modules/@uploadthing/react/dist"; /** <-- depends on your project structure */
+
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
