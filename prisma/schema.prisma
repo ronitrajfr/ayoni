@@ -80,6 +80,7 @@ model PageView {
 
     @@index([websiteId])
     @@index([createdAt])
+    @@index([websiteId, createdAt])
 }
 
 model User {

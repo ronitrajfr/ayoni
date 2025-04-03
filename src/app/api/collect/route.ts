@@ -11,8 +11,15 @@ type Payload = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { websiteId, url, referrer, browser, os } =
-      (await req.json()) as Payload;
+    const text = await req.text();
+    const { websiteId, url, referrer, browser, os } = JSON.parse(
+      text,
+    ) as Payload;
+
+    if (!websiteId || !url) {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+
     const website = await db.website.findUnique({ where: { id: websiteId } });
 
     if (!website) {

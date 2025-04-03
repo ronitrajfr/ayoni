@@ -22,7 +22,11 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <Providers>
         <body>{children}</body>
-        <Script defer src="/tracker.js" data-website-id="123" />
+        <Script
+          defer
+          src="/tracker.js"
+          data-website-id="cm90yv9so0001glcr3hvfve5e"
+        />
       </Providers>
     </html>
   );

@@ -14,5 +14,8 @@
   console.log(payload);
   console.log(websiteId);
 
-  //navigator.sendBeacon("https://pika.com/api/collect", JSON.stringify(payload));
+  navigator.sendBeacon(
+    "http://localhost:3000/api/collect",
+    JSON.stringify(payload),
+  );
 })();
