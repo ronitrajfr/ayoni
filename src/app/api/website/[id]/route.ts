@@ -45,7 +45,6 @@ export async function GET(
         startDate.setDate(now.getDate() - 7);
     }
 
-    // 🚀 Run all Prisma queries in parallel for speed
     const [
       totalPageViews,
       topUrls,
@@ -77,7 +76,7 @@ export async function GET(
         where: {
           websiteId,
           createdAt: { gte: startDate, lte: now },
-          NOT: { referrer: null },
+          referrer: { not: null },
         },
         _count: { referrer: true },
         orderBy: { _count: { referrer: "desc" } },
@@ -90,6 +89,7 @@ export async function GET(
           createdAt: { gte: startDate, lte: now },
         },
         _count: { browser: true },
+        orderBy: { _count: { browser: "desc" } },
       }),
 
       db.pageView.groupBy({
@@ -99,6 +99,7 @@ export async function GET(
           createdAt: { gte: startDate, lte: now },
         },
         _count: { os: true },
+        orderBy: { _count: { os: "desc" } },
       }),
 
       db.pageView.findMany({
