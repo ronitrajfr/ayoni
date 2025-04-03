@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import Providers from "@/components/Provider";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -21,6 +22,7 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <Providers>
         <body>{children}</body>
+        <Script defer src="/tracker.js" data-website-id="123" />
       </Providers>
     </html>
   );

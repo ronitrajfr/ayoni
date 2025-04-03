@@ -54,6 +54,34 @@ model Session {
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Website {
+    id        String   @id @default(cuid())
+    name      String
+    domain    String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    pageViews PageView[]
+
+    @@index([userId])
+}
+
+model PageView {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    url       String
+    referrer  String?
+    browser   String?
+    os        String?
+    country   String?
+    websiteId String
+    website   Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+    @@index([websiteId])
+    @@index([createdAt])
+}
+
 model User {
     id            String    @id @default(cuid())
     name          String?
@@ -63,6 +91,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    websites      Website[]
 }
 
 model VerificationToken {
