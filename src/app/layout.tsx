@@ -3,6 +3,7 @@ import Providers from "@/components/Provider";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import Script from "next/script";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -21,7 +22,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`}>
       <Providers>
-        <body>{children}</body>
+        <body>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </body>
         <Script
           defer
           src="/tracker.js"
