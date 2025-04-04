@@ -8,15 +8,16 @@ import { ThemeProvider } from "@/components/theme-provider";
 export const metadata: Metadata = {
   title: "Ayoni - Home",
   description:
-    "Discover and share hidden gems with breathtaking photos and precise locations, powered by the community. ",
+    "Open-source web analytics built for modern websites — simple, fast, and easy to use. ",
   openGraph: {
-    images: ["/og.webp"],
+    images: ["/ogayoni.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Ayoni - Home",
-    description: " ",
-    images: ["/og.webp"],
+    description:
+      " Open-source web analytics built for modern websites — simple, fast, and easy to use.",
+    images: ["/ogayoni.png"],
     creator: "@ronitrajfr",
   },
   icons: [{ rel: "icon", url: "/logo.svg" }],
