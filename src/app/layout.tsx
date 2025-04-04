@@ -49,6 +49,11 @@ export default function RootLayout({
           src="https://ayoni.vercel.app/tracker.js"
           data-website-id="cm92ne3d60001js049lik22be"
         ></script>
+        <Script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="7149a334-f8c2-4e2e-b891-3a7c6dd7bcd4"
+        />
       </Providers>
     </html>
   );
