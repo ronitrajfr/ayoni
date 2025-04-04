@@ -73,7 +73,7 @@ const WebsiteDetailPage = () => {
   };
 
   const copyTrackingCode = () => {
-    const code = `<script async src="http://localhost:3000/tracker.js" data-website-id="${websiteId}"></script>`;
+    const code = `<script async src="https://ayoni.vercel.app/tracker.js" data-website-id="${websiteId}"></script>`;
     navigator.clipboard.writeText(code);
     toast.success("Tracking code copied to clipboard");
   };
@@ -208,7 +208,7 @@ const WebsiteDetailPage = () => {
                   website to start tracking visitors.
                 </p>
                 <div className="bg-muted mb-4 overflow-x-auto rounded-md p-4 font-mono text-sm">
-                  {`<script async src="http://localhost:3000/tracker.js" data-website-id="${websiteId}"></script>`}
+                  {`<script async src="https://ayoni.vercel.app/tracker.js" data-website-id="${websiteId}"></script>`}
                 </div>
                 <Button onClick={copyTrackingCode}>
                   <Clipboard className="mr-2 h-4 w-4" />

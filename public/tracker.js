@@ -15,7 +15,7 @@
   console.log(websiteId);
 
   navigator.sendBeacon(
-    "http://localhost:3000/api/collect",
+    "https://ayoni.vercel.app/api/collect",
     JSON.stringify(payload),
   );
 })();
