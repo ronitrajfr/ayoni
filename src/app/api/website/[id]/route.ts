@@ -2,10 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { db } from "@/server/db";
 import { auth } from "@/server/auth";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function GET(req: NextRequest, { params }: any) {
   try {
     const session = await auth();
     if (!session?.user) {
@@ -149,10 +146,7 @@ export async function GET(
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function DELETE(req: NextRequest, { params }: any) {
   try {
     const session = await auth();
 
