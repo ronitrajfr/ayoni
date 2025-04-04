@@ -131,10 +131,6 @@ const DashboardPage = () => {
       </div>
 
       <div className="relative overflow-x-auto">
-        <div className="mb-4">
-          <Input type="search" placeholder="Search" className="max-w-sm" />
-        </div>
-
         {loading ? (
           <div className="py-8 text-center">Loading...</div>
         ) : websites.length === 0 ? (
