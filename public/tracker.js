@@ -11,8 +11,8 @@
     browser: navigator.userAgent,
     os: navigator.platform,
   };
-  console.log(payload);
-  console.log(websiteId);
+  // console.log(payload);
+  // console.log(websiteId);
 
   navigator.sendBeacon(
     "https://ayoni.vercel.app/api/collect",

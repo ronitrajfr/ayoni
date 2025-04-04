@@ -43,11 +43,6 @@ export default function RootLayout({
             {children}
           </ThemeProvider>
         </body>
-        <Script
-          defer
-          src="/tracker.js"
-          data-website-id="cm929wv7j000fglzr0psa0tp5"
-        />
       </Providers>
     </html>
   );

@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function HomePage() {
   const { data: session } = useSession();
 
-  console.log(session);
+  // console.log(session);
 
   return (
     <main>
