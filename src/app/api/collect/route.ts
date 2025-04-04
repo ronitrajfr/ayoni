@@ -25,9 +25,9 @@ export async function POST(req: NextRequest) {
     if (!website) {
       return NextResponse.json({ error: "Website not found" }, { status: 404 });
     }
-
-    const websiteUrl = new URL(website.domain);
-    if (websiteUrl.host !== url) {
+    const websiteUrl = website.domain;
+    const NewUrl = new URL(url);
+    if (websiteUrl !== NewUrl.host) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
