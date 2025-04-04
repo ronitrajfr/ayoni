@@ -44,6 +44,11 @@ export default function RootLayout({
             {children}
           </ThemeProvider>
         </body>
+        <script
+          async
+          src="https://ayoni.vercel.app/tracker.js"
+          data-website-id="cm92ne3d60001js049lik22be"
+        ></script>
       </Providers>
     </html>
   );

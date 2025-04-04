@@ -26,6 +26,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Website not found" }, { status: 404 });
     }
 
+    const websiteUrl = new URL(website.domain);
+    if (websiteUrl.host !== url) {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+
     await db.pageView.create({
       data: {
         websiteId,
