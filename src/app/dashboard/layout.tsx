@@ -4,7 +4,27 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { type Metadata } from "next";
+import { Ayonilogo } from "@/components/logo";
 import { ModeToggle } from "@/components/add-toggle";
+
+export const metadata: Metadata = {
+  title: "Ayoni - Dashboard",
+  description:
+    "Discover and share hidden gems with breathtaking photos and precise locations, powered by the community. ",
+  openGraph: {
+    images: ["/og.webp"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ayoni - Dashboard",
+    description: " ",
+    images: ["/og.webp"],
+    creator: "@ronitrajfr",
+  },
+  icons: [{ rel: "icon", url: "/logo.svg" }],
+};
+
 export default function DashboardLayout({
   children,
 }: {

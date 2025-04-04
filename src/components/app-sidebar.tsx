@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Globe, PieChart, ChevronsUpDown } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -14,14 +15,38 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
+// Define the Website type
+interface Website {
+  id: string;
+  name: string;
+  domain: string;
+}
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [websites, setWebsites] = useState<Website[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchWebsites() {
+      try {
+        const response = await fetch("/api/website");
+        if (!response.ok) {
+          throw new Error("Failed to fetch websites");
+        }
+        const data = await response.json();
+        setWebsites(data.websites);
+      } catch (error) {
+        console.error("Error fetching websites:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchWebsites();
+  }, []);
+
+  // Create navigation items with real website data
+  const navItems = [
     {
       title: "Dashboard",
       url: "#",
@@ -32,35 +57,23 @@ const data = {
       title: "Websites",
       url: "#",
       icon: Globe,
-      items: [
-        {
-          title: "Site 1",
-          url: "#",
-        },
-        {
-          title: "Site 2",
-          url: "#",
-        },
-        {
-          title: "Site 3",
-          url: "#",
-        },
-      ],
+      items: websites.map((website) => ({
+        title: website.name,
+        url: `/dashboard/${website.id}`,
+      })),
     },
-  ],
-};
+  ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <Logo />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navItems} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

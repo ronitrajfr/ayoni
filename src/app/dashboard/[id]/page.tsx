@@ -27,15 +27,6 @@ interface Analytics {
   operatingSystems: Record<string, number>;
 }
 
-interface PageView {
-  id: string;
-  url: string;
-  referrer: string | null;
-  browser: string;
-  os: string;
-  createdAt: string;
-}
-
 const WebsiteDetailPage = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -47,9 +38,9 @@ const WebsiteDetailPage = () => {
 
   const [website, setWebsite] = useState<Website | null>(null);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
-  const [recentPageViews, setRecentPageViews] = useState<PageView[]>([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState("7d");
+  const [activeTab, setActiveTab] = useState("analytics");
 
   const fetchWebsiteData = async (selectedPeriod = period) => {
     try {
@@ -62,7 +53,6 @@ const WebsiteDetailPage = () => {
       if (response.ok) {
         setWebsite(data.website);
         setAnalytics(data.analytics);
-        setRecentPageViews(data.recentPageViews);
       } else {
         toast.error(data.error || "Failed to fetch website data");
       }
@@ -172,7 +162,11 @@ const WebsiteDetailPage = () => {
         </Button>
       </div>
 
-      <Tabs defaultValue="settings">
+      <Tabs
+        defaultValue={activeTab}
+        value={activeTab}
+        onValueChange={setActiveTab}
+      >
         <TabsList className="mb-8">
           <TabsTrigger value="settings">
             <Globe className="mr-2 h-4 w-4" />
@@ -415,52 +409,6 @@ const WebsiteDetailPage = () => {
                 </CardContent>
               </Card>
             </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Page Views</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {recentPageViews && recentPageViews.length > 0 ? (
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="text-muted-foreground border-b text-left text-sm">
-                          <th className="pr-4 pb-2">URL</th>
-                          <th className="pr-4 pb-2">Referrer</th>
-                          <th className="pr-4 pb-2">Browser</th>
-                          <th className="pr-4 pb-2">OS</th>
-                          <th className="pb-2">Time</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {recentPageViews.map((view) => (
-                          <tr key={view.id} className="border-b">
-                            <td className="max-w-[200px] truncate py-3 pr-4">
-                              {getSimplePath(view.url)}
-                            </td>
-                            <td className="max-w-[150px] truncate py-3 pr-4">
-                              {view.referrer
-                                ? getHostFromUrl(view.referrer)
-                                : "Direct"}
-                            </td>
-                            <td className="py-3 pr-4">{view.browser}</td>
-                            <td className="py-3 pr-4">{view.os}</td>
-                            <td className="py-3">
-                              {new Date(view.createdAt).toLocaleString()}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div className="text-muted-foreground py-4 text-center">
-                    No recent page views
-                  </div>
-                )}
-              </CardContent>
-            </Card>
           </div>
         </TabsContent>
       </Tabs>
