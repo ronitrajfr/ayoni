@@ -49,7 +49,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navItems = [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: PieChart,
       isActive: true,
     },
