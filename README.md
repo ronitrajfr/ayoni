@@ -23,7 +23,7 @@
    ```html
    <script
      defer
-     src="https://yourdomain.com/tracker.js"
+     src="https://ayoni.vercel.app/tracker.js"
      data-website-id="YOUR_WEBSITE_ID"
    ></script>
    ```
