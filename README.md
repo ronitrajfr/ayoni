@@ -1,29 +1,61 @@
-# Create T3 App
+<h1 align="center">Say Hello to <a href="https://ayoni.vercel.app/">Ayoni</a>
+</h1>
+ <img width="1000" alt="header image" src="/ogayoni.png">
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+### **Key Features:**
 
-## What's next? How do I make an app with this?
+- **⚡ Simple Integration:** Add one script tag to your website — that’s it.
+- **🌐 Website Analytics:** Track real-time page views, top pages, referrers, browsers and devices.
+- **📈 Custom Dashboard:** View beautiful, clean analytics in your own dashboard.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+---
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+### **📄 How to Use Ayoni**
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+1. **Create a Website:**
 
-## Learn More
+   - Go to the dashboard.
+   - Add your site name and domain.
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+2. **Copy the Tracking Script:**
+   Paste this into your website's `<head>`:
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+   ```html
+   <script
+     defer
+     src="https://yourdomain.com/tracker.js"
+     data-website-id="YOUR_WEBSITE_ID"
+   ></script>
+   ```
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+3. **View Analytics:**
+   - Open the dashboard.
+   - Select your website to view page views, top URLs, browsers, and more.
 
-## How do I deploy this?
+---
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+### **Tech Stack:**
+
+- Nextjs
+- TypeScript
+- Shadcn
+- Postgres
+- Prisma
+- Tailwind
+- NextAuth
+
+### **Setting up locally**
+
+```bash
+git clone https://github.com/ronitrajfr/Ayoni.git
+cd Ayoni
+bun install
+```
+
+Change `.env.example` to `.env`, then add the PostgreSQL url (you can get one for free from NeonDB) and Google secret and client id & uploadthing keys.
+
+And then run :
+
+```bash
+bun run dev
+```
