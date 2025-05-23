@@ -63,6 +63,7 @@ model Website {
     userId    String
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     pageViews PageView[]
+    uniqueVisitorLogs UniqueVisitorLog[]
 
     @@index([userId])
 }
@@ -72,6 +73,7 @@ model PageView {
     createdAt DateTime @default(now())
     url       String
     referrer  String?
+    ip        String?
     browser   String?
     os        String?
     country   String?
@@ -81,6 +83,24 @@ model PageView {
     @@index([websiteId])
     @@index([createdAt])
     @@index([websiteId, createdAt])
+}
+
+model UniqueVisitorLog {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    url       String
+    referrer  String?
+    ip        String
+    browser   String?
+    os        String?
+    country   String?
+    websiteId String
+    website   Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+    @@index([websiteId])
+    @@index([createdAt])
+    @@index([websiteId, createdAt])
+    @@unique([ip, websiteId])
 }
 
 model User {

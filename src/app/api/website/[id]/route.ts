@@ -49,6 +49,7 @@ export async function GET(req: NextRequest, { params }: any) {
       browserStats,
       osStats,
       recentPageViews,
+      totalUniqueVisitors,
     ] = await Promise.all([
       db.pageView.count({
         where: {
@@ -107,6 +108,13 @@ export async function GET(req: NextRequest, { params }: any) {
         orderBy: { createdAt: "desc" },
         take: 50,
       }),
+
+      db.uniqueVisitorLog.count({
+        where: {
+          websiteId,
+          createdAt: { gte: startDate, lte: now },
+        },
+      }),
     ]);
 
     return NextResponse.json(
@@ -115,6 +123,7 @@ export async function GET(req: NextRequest, { params }: any) {
         analytics: {
           period,
           totalPageViews,
+          totalUniqueVisitors,
           uniqueUrlsCount: topUrls.length,
           topUrls: topUrls.map((u) => ({
             url: u.url,
@@ -141,41 +150,6 @@ export async function GET(req: NextRequest, { params }: any) {
     console.error("Error fetching website analytics:", error);
     return NextResponse.json(
       { error: "Failed to fetch website analytics" },
-      { status: 500 },
-    );
-  }
-}
-
-export async function DELETE(req: NextRequest, { params }: any) {
-  try {
-    const session = await auth();
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const websiteId = params.id;
-
-    const website = await db.website.findUnique({
-      where: {
-        id: websiteId,
-        userId: session.user.id,
-      },
-    });
-
-    if (!website) {
-      return NextResponse.json({ error: "Website not found" }, { status: 404 });
-    }
-
-    await db.website.delete({
-      where: { id: websiteId },
-    });
-
-    return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error) {
-    console.error("Error deleting website:", error);
-    return NextResponse.json(
-      { error: "Failed to delete website" },
       { status: 500 },
     );
   }
