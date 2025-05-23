@@ -154,3 +154,41 @@ export async function GET(req: NextRequest, { params }: any) {
     );
   }
 }
+
+export async function DELETE(req: NextRequest, { params }: any) {
+  try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const websiteId = params.id;
+
+    const website = await db.website.findUnique({
+      where: {
+        id: websiteId,
+
+        userId: session.user.id,
+      },
+    });
+
+    if (!website) {
+      return NextResponse.json({ error: "Website not found" }, { status: 404 });
+    }
+
+    await db.website.delete({
+      where: { id: websiteId },
+    });
+
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting website:", error);
+
+    return NextResponse.json(
+      { error: "Failed to delete website" },
+
+      { status: 500 },
+    );
+  }
+}

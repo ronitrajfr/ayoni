@@ -32,6 +32,7 @@ const WebsiteDetailPage = () => {
   const { data: session, status } = useSession();
   if (status === "unauthenticated") {
     router.push("/");
+    return null;
   }
   const params = useParams();
   const websiteId = params.id as string;
@@ -134,6 +135,17 @@ const WebsiteDetailPage = () => {
           </Link>
         </div>
         <div className="py-8 text-center">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!website && !loading) {
+    return (
+      <div className="py-10 text-center">
+        <p className="text-xl font-semibold">Website not found</p>
+        <Link href="/dashboard">
+          <Button className="mt-4">Back to Dashboard</Button>
+        </Link>
       </div>
     );
   }
@@ -290,8 +302,136 @@ const WebsiteDetailPage = () => {
               </Card>
             </div>
 
-            {/* Remaining analytics cards here (top URLs, referrers, browsers, OS) */}
-            {/* Keep your existing layout for those */}
+            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Top Pages</CardTitle>
+                </CardHeader>
+
+                <CardContent>
+                  {analytics?.topUrls && analytics.topUrls.length > 0 ? (
+                    <div className="space-y-2">
+                      {analytics.topUrls.map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between"
+                        >
+                          <div className="max-w-[300px] truncate">
+                            {getSimplePath(item.url) || "/"}
+                          </div>
+
+                          <div className="font-medium">{item.count}</div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-muted-foreground py-4 text-center">
+                      No data available
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Top Referrers</CardTitle>
+                </CardHeader>
+
+                <CardContent>
+                  {analytics?.referrers &&
+                  Object.keys(analytics.referrers).length > 0 ? (
+                    <div className="space-y-2">
+                      {Object.entries(analytics.referrers)
+
+                        .sort((a, b) => b[1] - a[1])
+
+                        .map(([referrer, count], index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between"
+                          >
+                            <div className="max-w-[300px] truncate">
+                              {getHostFromUrl(referrer)}
+                            </div>
+
+                            <div className="font-medium">{count}</div>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <div className="text-muted-foreground py-4 text-center">
+                      No data available
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Browsers</CardTitle>
+                </CardHeader>
+
+                <CardContent>
+                  {analytics?.browsers &&
+                  Object.keys(analytics.browsers).length > 0 ? (
+                    <div className="space-y-2">
+                      {Object.entries(analytics.browsers)
+
+                        .sort((a, b) => b[1] - a[1])
+
+                        .map(([browser, count], index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between"
+                          >
+                            <div>{browser}</div>
+
+                            <div className="font-medium">{count}</div>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <div className="text-muted-foreground py-4 text-center">
+                      No data available
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Operating Systems</CardTitle>
+                </CardHeader>
+
+                <CardContent>
+                  {analytics?.operatingSystems &&
+                  Object.keys(analytics.operatingSystems).length > 0 ? (
+                    <div className="space-y-2">
+                      {Object.entries(analytics.operatingSystems)
+
+                        .sort((a, b) => b[1] - a[1])
+
+                        .map(([os, count], index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between"
+                          >
+                            <div>{os}</div>
+
+                            <div className="font-medium">{count}</div>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <div className="text-muted-foreground py-4 text-center">
+                      No data available
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </TabsContent>
       </Tabs>
