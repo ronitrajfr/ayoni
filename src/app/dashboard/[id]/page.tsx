@@ -70,7 +70,7 @@ export default async function WebsiteDetailPage({
 
         <TabsContent value="analytics">
           <AnalyticsFilter id={website.id} period={period} />
-          <Suspense fallback={<AnalyticsSkeleton />}>
+          <Suspense key={period} fallback={<AnalyticsSkeleton />}>
             <WebsiteAnalytics website={website} period={period} />
           </Suspense>
         </TabsContent>
