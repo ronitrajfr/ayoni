@@ -33,13 +33,13 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
     default:
       startDate.setDate(now.getDate() - 7);
   }
-
   const [
     totalPageViews,
     topUrls,
     referrerStats,
     browserStats,
     osStats,
+    recentPageViews,
     totalUniqueVisitors,
   ] = await Promise.all([
     db.pageView.count({
@@ -91,6 +91,15 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
       orderBy: { _count: { os: "desc" } },
     }),
 
+    db.pageView.findMany({
+      where: {
+        websiteId: website.id,
+        createdAt: { gte: startDate, lte: now },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    }),
+
     db.uniqueVisitorLog.count({
       where: {
         websiteId: website.id,
@@ -98,6 +107,8 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
       },
     }),
   ]);
+
+
 
   return (
     <div className="mb-6">
@@ -195,25 +206,19 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
           </CardHeader>
 
           <CardContent>
-            {referrerStats &&
-              Object.keys(referrerStats).length > 0 ? (
+            {referrerStats && referrerStats.length > 0 ? (
               <div className="space-y-2">
-                {Object.entries(referrerStats)
-
-                  .sort((a, b) => b[1]._count.referrer - a[1]._count.referrer)
-
-                  .map(([referrer, count], index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between"
-                    >
-                      <div className="max-w-[300px] truncate">
-                        {getHostFromUrl(referrer)}
-                      </div>
-
-                      <div className="font-medium">{count._count.referrer}</div>
+                {referrerStats.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="max-w-[300px] truncate">
+                      {getHostFromUrl(item.referrer ?? "direct")}
                     </div>
-                  ))}
+                    <div className="font-medium">{item._count.referrer}</div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="text-muted-foreground py-4 text-center">
@@ -231,23 +236,17 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
           </CardHeader>
 
           <CardContent>
-            {browserStats &&
-              Object.keys(browserStats).length > 0 ? (
+            {browserStats && browserStats.length > 0 ? (
               <div className="space-y-2">
-                {Object.entries(browserStats)
-
-                  .sort((a, b) => b[1]._count.browser - a[1]._count.browser)
-
-                  .map(([browser, count], index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between"
-                    >
-                      <div>{browser}</div>
-
-                      <div className="font-medium">{count._count.browser}</div>
-                    </div>
-                  ))}
+                {browserStats.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
+                    <div>{item.browser ?? "unknown"}</div>
+                    <div className="font-medium">{item._count.browser}</div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="text-muted-foreground py-4 text-center">
@@ -263,23 +262,17 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
           </CardHeader>
 
           <CardContent>
-            {osStats &&
-              Object.keys(osStats).length > 0 ? (
+            {osStats && osStats.length > 0 ? (
               <div className="space-y-2">
-                {Object.entries(osStats)
-
-                  .sort((a, b) => b[1]._count.os - a[1]._count.os)
-
-                  .map(([os, count], index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between"
-                    >
-                      <div>{os}</div>
-
-                      <div className="font-medium">{count._count.os}</div>
-                    </div>
-                  ))}
+                {osStats.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
+                    <div>{item.os ?? "unknown"}</div>
+                    <div className="font-medium">{item._count.os}</div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="text-muted-foreground py-4 text-center">

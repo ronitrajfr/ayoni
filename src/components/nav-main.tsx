@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { ChevronRight, PieChart, Globe, type LucideIcon } from "lucide-react";
 
 import {
   Collapsible,
@@ -17,13 +17,18 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
+const iconMap: Record<string, LucideIcon> = {
+  PieChart,
+  Globe,
+};
+
 export function NavMain({
   items,
 }: {
   items: {
     title: string;
     url: string;
-    icon?: LucideIcon;
+    icon?: string;
     isActive?: boolean;
     items?: {
       title: string;
@@ -34,10 +39,18 @@ export function NavMain({
   return (
     <SidebarGroup>
       <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild tooltip="Dashboard">
+            <a href="/dashboard">
+              <PieChart />
+              <span>Dashboard</span>
+            </a>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
         {items.map((item) =>
           item.items ? (
             <Collapsible
-              key={item.title}
+              key={item.url}
               asChild
               defaultOpen={item.isActive}
               className="group/collapsible"
@@ -45,7 +58,10 @@ export function NavMain({
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton tooltip={item.title}>
-                    {item.icon && <item.icon />}
+                    {item.icon && (() => {
+                      const IconComponent = iconMap[item.icon!];
+                      return IconComponent ? <IconComponent /> : null;
+                    })()}
                     <span>{item.title}</span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
@@ -53,7 +69,7 @@ export function NavMain({
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     {item.items?.map((subItem) => (
-                      <SidebarMenuSubItem key={subItem.title}>
+                      <SidebarMenuSubItem key={subItem.url}>
                         <SidebarMenuSubButton asChild>
                           <a href={subItem.url}>
                             <span>{subItem.title}</span>
@@ -69,7 +85,10 @@ export function NavMain({
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild tooltip={item.title}>
                 <a href={item.url}>
-                  {item.icon && <item.icon />}
+                  {item.icon && (() => {
+                    const IconComponent = iconMap[item.icon!];
+                    return IconComponent ? <IconComponent /> : null;
+                  })()}
                   <span>{item.title}</span>
                 </a>
               </SidebarMenuButton>

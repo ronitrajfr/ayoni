@@ -1,7 +1,8 @@
 "use client";
 
 import { ChevronsUpDown, LogOut } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import { type Session } from "next-auth";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -17,9 +18,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-export function NavUser() {
+export function NavUser({ session }: { session: Session | null }) {
   const { isMobile } = useSidebar();
-  const { data: session } = useSession();
 
   const user = {
     name: session?.user?.name || "Guest User",

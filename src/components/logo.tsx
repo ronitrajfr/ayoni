@@ -6,6 +6,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 export const Ayonilogo = () => (
   <svg
@@ -26,11 +27,11 @@ export function Logo() {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <SidebarMenuButton size="lg">
-          <div className="flex items-center justify-center gap-2">
+        <SidebarMenuButton size="lg" className="justify-start" asChild>
+          <Link href="/" className="flex items-center justify-center gap-2">
             <Ayonilogo />
             <span className="text-xl font-bold">Ayoni</span>
-          </div>
+          </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>
