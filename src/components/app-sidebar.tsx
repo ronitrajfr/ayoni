@@ -1,9 +1,6 @@
-"use client";
-
+import { auth } from "@/server/auth";
+import { db } from "@/server/db";
 import * as React from "react";
-import { Globe, PieChart, ChevronsUpDown } from "lucide-react";
-import { useEffect, useState } from "react";
-
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 import { Logo } from "@/components/logo";
@@ -14,49 +11,25 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { redirect } from "next/navigation";
 
-// Define the Website type
-interface Website {
-  id: string;
-  name: string;
-  domain: string;
-}
+export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/");
+  }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [websites, setWebsites] = useState<Website[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchWebsites() {
-      try {
-        const response = await fetch("/api/website");
-        if (!response.ok) {
-          throw new Error("Failed to fetch websites");
-        }
-        const data = await response.json();
-        setWebsites(data.websites);
-      } catch (error) {
-        console.error("Error fetching websites:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchWebsites();
-  }, []);
-
-  // Create navigation items with real website data
-  const navItems = [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: PieChart,
-      isActive: true,
+  const websites = await db.website.findMany({
+    where: {
+      userId: session.user.id,
     },
+  });
+
+  const navItems = [
     {
       title: "Websites",
       url: "#",
-      icon: Globe,
+      icon: "Globe",
       items: websites.map((website) => ({
         title: website.name,
         url: `/dashboard/${website.id}`,
@@ -73,9 +46,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={navItems} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser />
+        <NavUser session={session} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
 }
+
+export const AppSidebarSkeleton = () => {
+  return (
+    <Sidebar collapsible="icon">
+      <SidebarHeader>
+        <Logo />
+      </SidebarHeader>
+      <SidebarContent>
+        <NavMain items={[]} />
+      </SidebarContent>
+      <SidebarFooter>
+        <NavUser session={null} />
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  );
+};
