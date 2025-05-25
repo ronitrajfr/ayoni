@@ -294,7 +294,7 @@ export const WebsiteAnalytics = async ({
           <CardContent>
             <div className="space-y-2">
               {(() => {
-                const deviceTypes = ["mobile", "tablet", "laptop"];
+                const deviceTypes = ["mobile", "tablet", "desktop"];
                 return deviceTypes.map((deviceType) => {
                   const stat = deviceTypeStats.find(
                     (item) => item.deviceType?.toLowerCase() === deviceType,
