@@ -8,9 +8,15 @@ type Website = {
   id: string;
   name: string;
   domain: string;
-}
+};
 
-export const WebsiteAnalytics = async ({ website, period }: { website: Website, period: string }) => {
+export const WebsiteAnalytics = async ({
+  website,
+  period,
+}: {
+  website: Website;
+  period: string;
+}) => {
   const session = await auth();
 
   if (!session?.user) {
@@ -18,7 +24,7 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
   }
 
   const now = new Date();
-  let startDate = new Date();
+  const startDate = new Date();
 
   switch (period) {
     case "24h":
@@ -39,6 +45,7 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
     referrerStats,
     browserStats,
     osStats,
+    deviceTypeStats,
     recentPageViews,
     totalUniqueVisitors,
   ] = await Promise.all([
@@ -91,6 +98,16 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
       orderBy: { _count: { os: "desc" } },
     }),
 
+    db.pageView.groupBy({
+      by: ["deviceType"],
+      where: {
+        websiteId: website.id,
+        createdAt: { gte: startDate, lte: now },
+      },
+      _count: { deviceType: true },
+      orderBy: { _count: { deviceType: "desc" } },
+    }),
+
     db.pageView.findMany({
       where: {
         websiteId: website.id,
@@ -108,8 +125,6 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
     }),
   ]);
 
-
-
   return (
     <div className="mb-6">
       <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
@@ -120,9 +135,7 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">
-              {totalPageViews || 0}
-            </div>
+            <div className="text-3xl font-bold">{totalPageViews || 0}</div>
           </CardContent>
         </Card>
 
@@ -133,9 +146,7 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">
-              {totalUniqueVisitors || 0}
-            </div>
+            <div className="text-3xl font-bold">{totalUniqueVisitors || 0}</div>
           </CardContent>
         </Card>
 
@@ -146,9 +157,7 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">
-              {topUrls.length || 0}
-            </div>
+            <div className="text-3xl font-bold">{topUrls.length || 0}</div>
           </CardContent>
         </Card>
 
@@ -160,11 +169,7 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">
-              {topUrls.length
-                ? Math.round(
-                  totalPageViews / topUrls.length,
-                )
-                : 0}
+              {topUrls.length ? Math.round(totalPageViews / topUrls.length) : 0}
             </div>
           </CardContent>
         </Card>
@@ -229,7 +234,7 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
         </Card>
       </div>
 
-      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
         <Card>
           <CardHeader>
             <CardTitle>Browsers</CardTitle>
@@ -281,6 +286,35 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
             )}
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Device Types</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {(() => {
+                const deviceTypes = ["mobile", "tablet", "laptop"];
+                return deviceTypes.map((deviceType) => {
+                  const stat = deviceTypeStats.find(
+                    (item) => item.deviceType?.toLowerCase() === deviceType,
+                  );
+                  const count = stat?._count.deviceType || 0;
+
+                  return (
+                    <div
+                      key={deviceType}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="capitalize">{deviceType}</div>
+                      <div className="font-medium">{count}</div>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
@@ -289,19 +323,19 @@ export const WebsiteAnalytics = async ({ website, period }: { website: Website, 
 export const AnalyticsSkeleton = () => {
   return (
     <div className="mb-6">
-      <div className="mb-4 h-10 w-48 animate-pulse rounded bg-muted" />
+      <div className="bg-muted mb-4 h-10 w-48 animate-pulse rounded" />
 
       <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <div className="h-6 w-24 animate-pulse rounded bg-muted" />
+            <div className="bg-muted h-6 w-24 animate-pulse rounded" />
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="flex items-center justify-between">
-                  <div className="h-4 w-32 animate-pulse rounded bg-muted" />
-                  <div className="h-4 w-8 animate-pulse rounded bg-muted" />
+                  <div className="bg-muted h-4 w-32 animate-pulse rounded" />
+                  <div className="bg-muted h-4 w-8 animate-pulse rounded" />
                 </div>
               ))}
             </div>
@@ -310,14 +344,14 @@ export const AnalyticsSkeleton = () => {
 
         <Card>
           <CardHeader>
-            <div className="h-6 w-28 animate-pulse rounded bg-muted" />
+            <div className="bg-muted h-6 w-28 animate-pulse rounded" />
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="flex items-center justify-between">
-                  <div className="h-4 w-32 animate-pulse rounded bg-muted" />
-                  <div className="h-4 w-8 animate-pulse rounded bg-muted" />
+                  <div className="bg-muted h-4 w-32 animate-pulse rounded" />
+                  <div className="bg-muted h-4 w-8 animate-pulse rounded" />
                 </div>
               ))}
             </div>
@@ -325,17 +359,17 @@ export const AnalyticsSkeleton = () => {
         </Card>
       </div>
 
-      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
         <Card>
           <CardHeader>
-            <div className="h-6 w-20 animate-pulse rounded bg-muted" />
+            <div className="bg-muted h-6 w-20 animate-pulse rounded" />
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="flex items-center justify-between">
-                  <div className="h-4 w-24 animate-pulse rounded bg-muted" />
-                  <div className="h-4 w-8 animate-pulse rounded bg-muted" />
+                  <div className="bg-muted h-4 w-24 animate-pulse rounded" />
+                  <div className="bg-muted h-4 w-8 animate-pulse rounded" />
                 </div>
               ))}
             </div>
@@ -344,14 +378,29 @@ export const AnalyticsSkeleton = () => {
 
         <Card>
           <CardHeader>
-            <div className="h-6 w-36 animate-pulse rounded bg-muted" />
+            <div className="bg-muted h-6 w-36 animate-pulse rounded" />
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="flex items-center justify-between">
-                  <div className="h-4 w-20 animate-pulse rounded bg-muted" />
-                  <div className="h-4 w-8 animate-pulse rounded bg-muted" />
+                  <div className="bg-muted h-4 w-20 animate-pulse rounded" />
+                  <div className="bg-muted h-4 w-8 animate-pulse rounded" />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <div className="bg-muted h-6 w-24 animate-pulse rounded" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <div className="bg-muted h-4 w-16 animate-pulse rounded" />
+                  <div className="bg-muted h-4 w-8 animate-pulse rounded" />
                 </div>
               ))}
             </div>

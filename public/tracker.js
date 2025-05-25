@@ -3,6 +3,14 @@
   const websiteId = script?.getAttribute("data-website-id");
 
   if (!websiteId) return;
+  let deviceType = "desktop";
+  const width = window.innerWidth;
+
+  if (width <= 767) {
+    deviceType = "mobile";
+  } else if (width <= 1024) {
+    deviceType = "tablet";
+  }
 
   const payload = {
     websiteId,

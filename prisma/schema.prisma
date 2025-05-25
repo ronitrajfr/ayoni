@@ -77,6 +77,7 @@ model PageView {
     browser   String?
     os        String?
     country   String?
+    deviceType String?
     websiteId String
     website   Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 
@@ -94,6 +95,7 @@ model UniqueVisitorLog {
     browser   String?
     os        String?
     country   String?
+    deviceType String?
     websiteId String
     website   Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 

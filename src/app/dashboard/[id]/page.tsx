@@ -16,14 +16,17 @@ import { AnalyticsFilter } from "../_components/analytics-filter";
 
 export default async function WebsiteDetailPage({
   searchParams,
-  params
+  params,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-  params: Promise<{ id: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
   const awaitedSearchParams = await searchParams;
-  const period = typeof awaitedSearchParams.period === "string" ? awaitedSearchParams.period : "24h";
+  const period =
+    typeof awaitedSearchParams.period === "string"
+      ? awaitedSearchParams.period
+      : "24h";
 
   const session = await auth();
 
@@ -42,7 +45,12 @@ export default async function WebsiteDetailPage({
   return (
     <div className="container mx-auto max-w-6xl py-8">
       <div className="relative mb-8 flex items-center justify-between">
-        <Button variant="ghost" size="sm" className="w-fit absolute -left-10 -top-[120%]" asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="absolute -top-[120%] -left-10 w-fit"
+          asChild
+        >
           <Link href="/dashboard">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Websites
@@ -77,4 +85,4 @@ export default async function WebsiteDetailPage({
       </Tabs>
     </div>
   );
-};
+}

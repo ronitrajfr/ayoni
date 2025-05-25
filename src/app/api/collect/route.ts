@@ -8,6 +8,7 @@ type Payload = {
   referrer?: string;
   browser?: string;
   os?: string;
+  deviceType?: string;
 };
 
 export async function POST(req: NextRequest) {
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
     const ip = headersList.get("x-forwarded-for") ?? "unknown";
 
     const text = await req.text();
-    const { websiteId, url, referrer, browser, os } = JSON.parse(
+    const { websiteId, url, referrer, browser, os, deviceType } = JSON.parse(
       text,
     ) as Payload;
 
@@ -46,6 +47,7 @@ export async function POST(req: NextRequest) {
         browser,
         os,
         country: null,
+        deviceType,
       },
     });
 
@@ -68,6 +70,7 @@ export async function POST(req: NextRequest) {
             browser,
             os,
             country: null,
+            deviceType,
           },
         });
       }
