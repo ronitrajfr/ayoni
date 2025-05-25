@@ -18,6 +18,7 @@
     referrer: document.referrer,
     browser: navigator.userAgent,
     os: navigator.platform,
+    deviceType,
   };
   // console.log(payload);
   // console.log(websiteId);
