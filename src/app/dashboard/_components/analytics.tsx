@@ -3,6 +3,7 @@ import { db } from "@/server/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getSimplePath, getHostFromUrl } from "@/lib/utils";
 import { redirect } from "next/navigation";
+import { extractBrowserName } from "@/lib/extract-browser";
 
 type Website = {
   id: string;
@@ -243,13 +244,19 @@ export const WebsiteAnalytics = async ({
           <CardContent>
             {browserStats && browserStats.length > 0 ? (
               <div className="space-y-2">
-                {browserStats.map((item, index) => (
+                {Object.entries(
+                  browserStats.reduce((acc: Record<string, number>, item) => {
+                    const name = extractBrowserName(item.browser ?? "");
+                    acc[name] = (acc[name] || 0) + item._count.browser;
+                    return acc;
+                  }, {}),
+                ).map(([browser, count], index) => (
                   <div
                     key={index}
                     className="flex items-center justify-between"
                   >
-                    <div>{item.browser ?? "unknown"}</div>
-                    <div className="font-medium">{item._count.browser}</div>
+                    <div>{browser}</div>
+                    <div className="font-medium">{count}</div>
                   </div>
                 ))}
               </div>
