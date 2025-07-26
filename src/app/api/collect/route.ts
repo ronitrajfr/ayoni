@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
         referrer,
         browser,
         os,
-        country,
+        country: country ?? null,
         deviceType,
       },
     });
