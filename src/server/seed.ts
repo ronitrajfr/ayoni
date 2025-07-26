@@ -61,7 +61,100 @@ const fakeCountries = [
   "BR",
   "IN",
   "NL",
+  "IT",
+  "ES",
+  "RU",
+  "CN",
+  "KR",
+  "SE",
+  "NO",
+  "FI",
+  "DK",
+  "PL",
+  "TR",
+  "MX",
+  "ZA",
+  "AR",
+  "CH",
+  "BE",
+  "AT",
+  "IE",
+  "NZ",
+  "SG",
+  "ID",
+  "TH",
+  "MY",
+  "PH",
+  "EG",
+  "SA",
+  "AE",
+  "IL",
+  "GR",
+  "PT",
+  "HU",
+  "CZ",
+  "SK",
+  "RO",
+  "BG",
+  "UA",
+  "VN",
+  "PK",
+  "BD",
+  "NG",
 ];
+
+const countryNames: Record<string, string> = {
+  US: "United States",
+  CA: "Canada",
+  GB: "United Kingdom",
+  DE: "Germany",
+  FR: "France",
+  JP: "Japan",
+  AU: "Australia",
+  BR: "Brazil",
+  IN: "India",
+  NL: "Netherlands",
+  IT: "Italy",
+  ES: "Spain",
+  RU: "Russia",
+  CN: "China",
+  KR: "South Korea",
+  SE: "Sweden",
+  NO: "Norway",
+  FI: "Finland",
+  DK: "Denmark",
+  PL: "Poland",
+  TR: "Turkey",
+  MX: "Mexico",
+  ZA: "South Africa",
+  AR: "Argentina",
+  CH: "Switzerland",
+  BE: "Belgium",
+  AT: "Austria",
+  IE: "Ireland",
+  NZ: "New Zealand",
+  SG: "Singapore",
+  ID: "Indonesia",
+  TH: "Thailand",
+  MY: "Malaysia",
+  PH: "Philippines",
+  EG: "Egypt",
+  SA: "Saudi Arabia",
+  AE: "United Arab Emirates",
+  IL: "Israel",
+  GR: "Greece",
+  PT: "Portugal",
+  HU: "Hungary",
+  CZ: "Czech Republic",
+  SK: "Slovakia",
+  RO: "Romania",
+  BG: "Bulgaria",
+  UA: "Ukraine",
+  VN: "Vietnam",
+  PK: "Pakistan",
+  BD: "Bangladesh",
+  NG: "Nigeria",
+};
 
 const fakePostTitles = [
   "Getting Started with React",
@@ -87,25 +180,29 @@ function randomIP(): string {
 function randomDate(daysAgo: number): Date {
   const now = new Date();
   const pastDate = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
-  const randomTime = pastDate.getTime() + Math.random() * (now.getTime() - pastDate.getTime());
+  const randomTime =
+    pastDate.getTime() + Math.random() * (now.getTime() - pastDate.getTime());
   return new Date(randomTime);
 }
 
 async function seedPageViews(websiteId: string, count: number = 1000) {
   console.log(`🌱 Seeding ${count} page views...`);
-  
+
   const pageViews = [];
   for (let i = 0; i < count; i++) {
+    const country = randomChoice(fakeCountries);
     pageViews.push({
       url: randomChoice(fakeUrls),
       referrer: randomChoice(fakeReferrers),
       ip: randomIP(),
       browser: randomChoice(fakeBrowsers),
       os: randomChoice(fakeOS),
-      country: randomChoice(fakeCountries),
+      country,
       websiteId,
       createdAt: randomDate(30), // last 30 days
     });
+    // Optionally log for realism:
+    // console.log(`PageView: ${country} (${countryNames[country]})`);
   }
 
   await db.pageView.createMany({
@@ -115,7 +212,7 @@ async function seedPageViews(websiteId: string, count: number = 1000) {
 
 async function seedUniqueVisitors(websiteId: string, count: number = 200) {
   console.log(`🌱 Seeding ${count} unique visitors...`);
-  
+
   const visitors = [];
   const usedIPs = new Set<string>();
 
@@ -126,17 +223,19 @@ async function seedUniqueVisitors(websiteId: string, count: number = 200) {
       ip = randomIP();
     }
     usedIPs.add(ip);
-
+    const country = randomChoice(fakeCountries);
     visitors.push({
       url: randomChoice(fakeUrls),
       referrer: randomChoice(fakeReferrers),
       ip,
       browser: randomChoice(fakeBrowsers),
       os: randomChoice(fakeOS),
-      country: randomChoice(fakeCountries),
+      country,
       websiteId,
       createdAt: randomDate(30), // last 30 days
     });
+    // Optionally log for realism:
+    // console.log(`Visitor: ${country} (${countryNames[country]})`);
   }
 
   await db.uniqueVisitorLog.createMany({
@@ -146,7 +245,7 @@ async function seedUniqueVisitors(websiteId: string, count: number = 200) {
 
 async function seedPosts(userId: string, count: number = 10) {
   console.log(`🌱 Seeding ${count} posts...`);
-  
+
   const posts = [];
   for (let i = 0; i < count; i++) {
     posts.push({
@@ -202,15 +301,25 @@ async function ensureWebsiteExists(websiteId: string, userId: string) {
 
 async function main() {
   const args = process.argv.slice(2);
-  
+
   if (args.length < 2) {
-    console.log("❌ Usage: bun run src/server/seed.ts <userId> <websiteId> [pageViews] [uniqueVisitors] [posts]");
-    console.log("📝 Example: bun run src/server/seed.ts user123 website456 1000 200 10");
+    console.log(
+      "❌ Usage: bun run src/server/seed.ts <userId> <websiteId> [pageViews] [uniqueVisitors] [posts]",
+    );
+    console.log(
+      "📝 Example: bun run src/server/seed.ts user123 website456 1000 200 10",
+    );
     process.exit(1);
   }
 
-  const [userId, websiteId, pageViewsCount = "1000", uniqueVisitorsCount = "200", postsCount = "10"] = args;
-  
+  const [
+    userId,
+    websiteId,
+    pageViewsCount = "1000",
+    uniqueVisitorsCount = "200",
+    postsCount = "10",
+  ] = args;
+
   if (!userId || !websiteId) {
     console.log("❌ userId and websiteId are required");
     process.exit(1);
@@ -236,16 +345,17 @@ async function main() {
 
     console.log("");
     console.log("✅ Seeding completed successfully!");
-    
+
     // Show summary
     const totalPageViews = await db.pageView.count({ where: { websiteId } });
-    const totalUniqueVisitors = await db.uniqueVisitorLog.count({ where: { websiteId } });
+    const totalUniqueVisitors = await db.uniqueVisitorLog.count({
+      where: { websiteId },
+    });
     const totalPosts = await db.post.count({ where: { createdById: userId } });
-    
+
     console.log(`📊 Total page views for website: ${totalPageViews}`);
     console.log(`👥 Total unique visitors for website: ${totalUniqueVisitors}`);
     console.log(`📝 Total posts for user: ${totalPosts}`);
-    
   } catch (error) {
     console.error("❌ Error during seeding:", error);
     process.exit(1);
