@@ -1,6 +1,10 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/server/db";
 import { auth } from "@/server/auth";
+import { redis } from "@/utils/redis";
+import { getRateLimiter } from "@/utils/rate-limit";
+import { getIp } from "@/utils/getIP";
+import { headers } from "next/headers";
 
 // GET - Fetch all websites for the current user
 export async function GET(req: NextRequest) {
@@ -10,11 +14,20 @@ export async function GET(req: NextRequest) {
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    const token = `websites:${session.user.id}`;
+
+    const cachedData: string | null = await redis.get(token);
+
+    if (cachedData) {
+      return NextResponse.json({ websites: JSON.parse(cachedData) });
+    }
 
     const websites = await db.website.findMany({
       where: { userId: session.user.id },
       orderBy: { createdAt: "desc" },
     });
+
+    await redis.set(token, JSON.stringify(websites), { ex: 300 });
 
     return NextResponse.json({ websites }, { status: 200 });
   } catch (error) {
@@ -29,11 +42,28 @@ export async function GET(req: NextRequest) {
 // POST - Create a new website
 export async function POST(req: NextRequest) {
   try {
+    const header = await headers();
+
+    const limiter = getRateLimiter("early-access-waitlist");
+    if (limiter) {
+      const ip = getIp(header);
+      const { success } = await limiter.limit(ip);
+
+      if (!success) {
+        return NextResponse.json(
+          { error: "Too many requests. Please try again later." },
+          { status: 429 },
+        );
+      }
+    }
+
     const session = await auth();
 
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const token = `websites:${session.user.id}`;
 
     const { name, domain } = await req.json();
 
@@ -63,6 +93,8 @@ export async function POST(req: NextRequest) {
         userId: session.user.id,
       },
     });
+
+    await redis.del(token);
 
     return NextResponse.json({ website }, { status: 201 });
   } catch (error) {

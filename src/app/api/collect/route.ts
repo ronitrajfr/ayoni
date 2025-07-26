@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { db } from "@/server/db";
 import { headers } from "next/headers";
+import { geolocation } from "@vercel/functions";
 
 type Payload = {
   websiteId: string;
@@ -20,6 +21,8 @@ export async function POST(req: NextRequest) {
     const { websiteId, url, referrer, browser, os, deviceType } = JSON.parse(
       text,
     ) as Payload;
+
+    const { country } = geolocation(req);
 
     if (!websiteId || !url) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
@@ -46,7 +49,7 @@ export async function POST(req: NextRequest) {
         referrer,
         browser,
         os,
-        country: null,
+        country: country ?? null,
         deviceType,
       },
     });
@@ -69,7 +72,7 @@ export async function POST(req: NextRequest) {
             referrer,
             browser,
             os,
-            country: null,
+            country,
             deviceType,
           },
         });

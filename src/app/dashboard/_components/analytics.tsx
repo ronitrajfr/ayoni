@@ -47,6 +47,7 @@ export const WebsiteAnalytics = async ({
     browserStats,
     osStats,
     deviceTypeStats,
+    countryStats,
     recentPageViews,
     totalUniqueVisitors,
   ] = await Promise.all([
@@ -107,6 +108,18 @@ export const WebsiteAnalytics = async ({
       },
       _count: { deviceType: true },
       orderBy: { _count: { deviceType: "desc" } },
+    }),
+
+    db.pageView.groupBy({
+      by: ["country"],
+      where: {
+        websiteId: website.id,
+        createdAt: { gte: startDate, lte: now },
+        country: { not: null },
+      },
+      _count: { country: true },
+      orderBy: { _count: { country: "desc" } },
+      take: 10,
     }),
 
     db.pageView.findMany({
@@ -320,6 +333,30 @@ export const WebsiteAnalytics = async ({
                 });
               })()}
             </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Top Countries</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {countryStats && countryStats.length > 0 ? (
+              <div className="space-y-2">
+                {countryStats.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
+                    <div>{item.country ?? "unknown"}</div>
+                    <div className="font-medium">{item._count.country}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-muted-foreground py-4 text-center">
+                No data available
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
